@@ -1,0 +1,18 @@
+{
+  "name": "elton-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio Elton Hounnou — The KOF, propulsé par My AfriChat",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "my-africhat": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vite": "^5.2.0"
+  }
+}
