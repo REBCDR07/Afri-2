@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Elton Hounnou — The KOF · Builder & Developer</title>
+<meta name="description" content="Portfolio d'Elton Hounnou, alias The KOF — Développeur fullstack & builder de produits IA basé à Cotonou, Bénin. Créateur de My AfriChat, Vaultify, FrontForge."/>
+<meta property="og:title" content="Elton Hounnou — The KOF"/>
+<meta property="og:description" content="Builder de produits digitaux depuis Cotonou, Bénin."/>
+<meta name="theme-color" content="#05030f"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --bg:       #05030f;
+  --s1:       #09071d;
+  --s2:       #0d0b25;
+  --s3:       #130f30;
+  --s4:       #1a1340;
+  --border:   #1a1538;
+  --border2:  #271f50;
+  --border3:  #352a68;
+
+  --indigo:   #6366f1;
+  --indigo2:  #818cf8;
+  --violet:   #8b5cf6;
+  --violet2:  #a78bfa;
+  --deep:     #4338ca;
+  --deep2:    #3730a3;
+
+  --gold:     #f59e0b;
+  --gold2:    #fbbf24;
+  --gold3:    #fde68a;
+  --goldd:    #d97706;
+
+  --green:    #34d399;
+  --rose:     #fb7185;
+  --white:    #eeeaff;
+  --white2:   #c4beff;
+  --muted:    #5a569a;
+  --muted2:   #3c3670;
+  --muted3:   #28224e;
+
+  --r:        16px;
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  cursor: none;
+  line-height: 1;
+}
+
+/* ═══════════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════════ */
+#cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: width .2s, height .2s, background .2s, opacity .2s;
+  mix-blend-mode: difference;
+}
+#cursor-ring {
+  position: fixed;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(99,102,241,.5);
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: all .12s ease;
+  opacity: .7;
+}
+body.cursor-hover #cursor { width: 22px; height: 22px; background: var(--indigo); }
+body.cursor-hover #cursor-ring { width: 48px; height: 48px; opacity: .3; }
+
+a, button, [onclick], .project-card, .skill-chip, .ac-chip { cursor: none !important; }
+
+/* ═══════════════════════════════════════════
+   ATMOSPHERIC EFFECTS
+═══════════════════════════════════════════ */
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  background-size: 256px;
+  pointer-events: none; z-index: 9997;
+}
+
+/* Ambient blobs */
+.blob { position: fixed; border-radius: 50%; filter: blur(140px); opacity: .09; pointer-events: none; z-index: 0; }
+.b1 { width: 800px; height: 800px; background: var(--violet); top: -350px; left: -250px; animation: blob1 22s ease-in-out infinite alternate; }
+.b2 { width: 600px; height: 600px; background: var(--indigo); bottom: -250px; right: -150px; animation: blob2 17s ease-in-out infinite alternate; }
+.b3 { width: 400px; height: 400px; background: var(--gold); top: 35%; left: 55%; animation: blob3 20s ease-in-out infinite alternate; }
+.b4 { width: 300px; height: 300px; background: var(--deep); top: 70%; left: 20%; animation: blob4 25s ease-in-out infinite alternate; opacity: .06; }
+@keyframes blob1 { to { transform: translate(70px, 50px) scale(1.1); } }
+@keyframes blob2 { to { transform: translate(-60px, 40px) scale(.95); } }
+@keyframes blob3 { to { transform: translate(-50px, -70px) scale(1.05); } }
+@keyframes blob4 { to { transform: translate(40px, -30px); } }
+
+/* Grid pattern */
+.grid-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(99,102,241,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 20%, transparent 100%);
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT UTILS
+═══════════════════════════════════════════ */
+section { position: relative; z-index: 1; }
+.container { max-width: 1120px; margin: 0 auto; padding: 0 2rem; }
+
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: .65rem; letter-spacing: .2em;
+  color: var(--gold); text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: .6rem;
+  margin-bottom: .75rem;
+}
+.section-eyebrow::before { content: '//'; color: var(--muted2); font-size: .6rem; }
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: -.02em;
+}
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .85rem 3rem;
+  background: rgba(5,3,15,.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  transition: padding .3s, background .3s;
+}
+nav.scrolled { padding: .65rem 3rem; background: rgba(5,3,15,.92); }
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 1.05rem;
+  text-decoration: none;
+  display: flex; align-items: center; gap: .3rem;
+  color: var(--white);
+}
+.nav-logo-dot { color: var(--gold); font-size: 1.4rem; line-height: 1; }
+
+.nav-links {
+  display: flex; gap: 2.2rem; list-style: none;
+  font-family: var(--font-mono); font-size: .72rem;
+  letter-spacing: .06em;
+}
+.nav-links a { color: var(--muted); text-decoration: none; transition: color .2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--white); }
+
+.nav-cta {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .5rem 1.2rem; border-radius: 99px;
+  border: 1px solid var(--border3);
+  background: rgba(99,102,241,.08);
+  color: var(--indigo2);
+  font-family: var(--font-display); font-weight: 600; font-size: .8rem;
+  text-decoration: none; transition: all .2s;
+}
+.nav-cta:hover { background: var(--indigo); color: #fff; border-color: var(--indigo); }
+
+.nav-ham {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; padding: .4rem;
+}
+.nav-ham span { width: 22px; height: 1.5px; background: var(--white2); border-radius: 2px; transition: all .3s; }
+
+/* Mobile drawer */
+.nav-drawer {
+  position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
+  background: var(--s1); border-left: 1px solid var(--border);
+  z-index: 2000; padding: 5rem 2rem 2rem;
+  display: flex; flex-direction: column; gap: 1.5rem;
+  transition: right .3s cubic-bezier(.4,0,.2,1);
+}
+.nav-drawer.open { right: 0; }
+.nav-drawer a {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.2rem;
+  color: var(--white2); text-decoration: none;
+  padding: .75rem 0; border-bottom: 1px solid var(--border);
+  transition: color .2s;
+}
+.nav-drawer a:hover { color: var(--gold); }
+.nav-drawer-close {
+  position: absolute; top: 1.5rem; right: 1.5rem;
+  background: none; border: none; color: var(--muted);
+  font-size: 1.4rem; line-height: 1;
+}
+.nav-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1999;
+}
+.nav-overlay.open { display: block; }
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 7rem 0 5rem;
+}
+
+.hero-grid {
+  display: grid; grid-template-columns: 1.1fr .9fr;
+  gap: 4rem; align-items: center;
+}
+
+.hero-available {
+  display: inline-flex; align-items: center; gap: .55rem;
+  padding: .38rem 1rem; border-radius: 99px;
+  background: rgba(52,211,153,.06);
+  border: 1px solid rgba(52,211,153,.2);
+  font-family: var(--font-mono); font-size: .65rem;
+  color: var(--green); letter-spacing: .08em;
+  margin-bottom: 1.75rem;
+}
+.avail-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  animation: pulse-g 1.8s ease-in-out infinite;
+}
+@keyframes pulse-g {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .3; transform: scale(.5); }
+}
+
+.hero-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(3.2rem, 9vw, 6rem);
+  line-height: .95; letter-spacing: -.04em;
+  margin-bottom: .5rem;
+}
+.hero-name .line1 { color: var(--white); display: block; }
+.hero-name .line2 {
+  display: block;
+  background: linear-gradient(125deg, var(--indigo2) 0%, var(--violet2) 60%, var(--gold) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.hero-kof {
+  font-family: var(--font-mono); font-size: .72rem;
+  letter-spacing: .25em; color: var(--gold); text-transform: uppercase;
+  display: flex; align-items: center; gap: .8rem;
+  margin-bottom: 1.5rem;
+}
+.hero-kof::after { content: ''; height: 1px; width: 60px; background: var(--border3); }
+
+/* Typewriter */
+.hero-typewriter-wrap {
+  display: flex; align-items: center; gap: .6rem;
+  margin-bottom: 1.75rem;
+  font-family: var(--font-mono); font-size: .82rem;
+  color: var(--muted);
+}
+.hero-typewriter-prefix { color: var(--border3); }
+#hero-typewriter { color: var(--indigo2); }
+.tw-cursor {
+  width: 2px; height: 1.1em;
+  background: var(--gold);
+  display: inline-block; vertical-align: text-bottom;
+  animation: blink .75s step-end infinite;
+}
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+.hero-desc {
+  color: var(--muted); line-height: 1.72; font-size: .94rem;
+  max-width: 460px; margin-bottom: 2.5rem;
+}
+.hero-desc strong { color: var(--white2); font-weight: 500; }
+
+.hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .82rem 1.9rem; border-radius: 14px; border: none;
+  background: linear-gradient(135deg, var(--indigo), var(--violet));
+  color: #fff; font-family: var(--font-display); font-weight: 700; font-size: .88rem;
+  text-decoration: none; transition: all .2s;
+  box-shadow: 0 8px 28px rgba(99,102,241,.35), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(99,102,241,.5), inset 0 1px 0 rgba(255,255,255,.15);
+}
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .82rem 1.9rem; border-radius: 14px;
+  border: 1px solid var(--border3); background: rgba(255,255,255,.03);
+  color: var(--muted); font-family: var(--font-display); font-weight: 600; font-size: .88rem;
+  text-decoration: none; transition: all .2s;
+}
+.btn-ghost:hover { border-color: var(--violet2); color: var(--white); background: rgba(139,92,246,.06); }
+
+/* Hero stats */
+.hero-stats {
+  display: flex; gap: 2.5rem;
+  margin-top: 2.75rem; padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.stat-num {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 1.9rem; letter-spacing: -.03em;
+  background: linear-gradient(135deg, var(--white), var(--violet2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  line-height: 1;
+}
+.stat-label {
+  font-family: var(--font-mono); font-size: .6rem;
+  color: var(--muted); letter-spacing: .1em;
+  text-transform: uppercase; margin-top: .3rem;
+}
+
+/* Hero card (right side) */
+.hero-visual { display: flex; justify-content: center; align-items: center; }
+
+.hero-card {
+  position: relative; width: 300px; height: 360px;
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 28px; overflow: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .85rem;
+  box-shadow: 0 40px 80px rgba(0,0,0,.55), 0 0 0 1px var(--border);
+}
+
+/* rotating conic gradient border shine */
+.hero-card::before {
+  content: ''; position: absolute;
+  top: -60%; left: -60%; width: 220%; height: 220%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(99,102,241,.18) 50deg,
+    rgba(139,92,246,.1) 100deg,
+    transparent 150deg
+  );
+  animation: card-spin 8s linear infinite;
+  z-index: 0;
+}
+@keyframes card-spin { to { transform: rotate(360deg); } }
+
+.hero-card-inner {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center; text-align: center;
+}
+
+.hero-av {
+  width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 1rem;
+  background: linear-gradient(135deg, var(--indigo), var(--violet));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 2.2rem; color: #fff;
+  box-shadow: 0 0 0 3px var(--s2), 0 0 0 4px var(--border2), 0 0 50px rgba(99,102,241,.4);
+}
+
+.hero-card-name {
+  font-family: var(--font-display); font-weight: 800; font-size: 1rem;
+  margin-bottom: .15rem;
+}
+.hero-card-handle {
+  font-family: var(--font-mono); font-size: .65rem;
+  color: var(--muted); margin-bottom: 1rem;
+}
+
+.hero-tags {
+  display: flex; flex-wrap: wrap; gap: .4rem; justify-content: center;
+  padding: 0 1rem;
+}
+.htag {
+  padding: .25rem .65rem; border-radius: 99px;
+  border: 1px solid var(--border2);
+  background: rgba(99,102,241,.07);
+  font-size: .65rem; color: var(--violet2);
+  font-family: var(--font-mono);
+}
+
+.hero-card-status {
+  position: absolute; bottom: 1.2rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: .45rem;
+  background: rgba(52,211,153,.07);
+  border: 1px solid rgba(52,211,153,.18);
+  border-radius: 99px; padding: .3rem .85rem;
+  font-family: var(--font-mono); font-size: .62rem;
+  color: var(--green); white-space: nowrap; z-index: 1;
+}
+.status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse-g 2s ease-in-out infinite; }
+
+/* ═══════════════════════════════════════════
+   MARQUEE STRIP
+═══════════════════════════════════════════ */
+.marquee-section {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, var(--s1) 0%, var(--s2) 50%, var(--s1) 100%);
+  overflow: hidden; padding: .9rem 0;
+}
+.marquee-section::before,
+.marquee-section::after {
+  content: ''; position: absolute; top: 0; bottom: 0;
+  width: 140px; z-index: 2;
+  background: linear-gradient(90deg, var(--bg), transparent);
+}
+.marquee-section::before { left: 0; }
+.marquee-section::after  { right: 0; transform: scaleX(-1); }
+
+.marquee-inner { display: flex; gap: 0; }
+.marquee-track {
+  display: flex; align-items: center; gap: 2.5rem;
+  flex-shrink: 0;
+  animation: marquee 30s linear infinite;
+  padding-right: 2.5rem;
+}
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+.m-item {
+  display: flex; align-items: center; gap: .55rem;
+  font-family: var(--font-mono); font-size: .68rem;
+  color: var(--muted); letter-spacing: .06em;
+  white-space: nowrap;
+}
+.m-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border3); flex-shrink: 0; }
+.m-item.gold { color: var(--gold); }
+.m-item.indigo { color: var(--indigo2); }
+.m-item.violet { color: var(--violet2); }
+
+/* ═══════════════════════════════════════════
+   REVEAL ANIMATIONS
+═══════════════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .65s ease, transform .65s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════
+   ABOUT
+═══════════════════════════════════════════ */
+#about { padding: 8rem 0; }
+
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 5rem; align-items: start;
+}
+
+.about-text {
+  color: var(--muted); line-height: 1.78; font-size: .94rem;
+  margin-bottom: 1.3rem;
+}
+.about-text strong { color: var(--white2); font-weight: 500; }
+
+.info-cards { display: flex; flex-direction: column; gap: .85rem; }
+
+.info-card {
+  display: flex; align-items: flex-start; gap: 1rem;
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.1rem 1.4rem;
+  transition: border-color .2s, transform .2s;
+}
+.info-card:hover { border-color: var(--border2); transform: translateX(5px); }
+.info-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--s3); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.info-label {
+  font-family: var(--font-mono); font-size: .58rem;
+  color: var(--muted); letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: .28rem;
+}
+.info-val { font-size: .88rem; font-weight: 500; color: var(--white2); line-height: 1.4; }
+.info-val a { color: var(--indigo2); text-decoration: none; }
+.info-val a:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════════
+   TIMELINE / PARCOURS
+═══════════════════════════════════════════ */
+#parcours {
+  padding: 8rem 0;
+  background: linear-gradient(180deg, transparent, var(--s1) 30%, var(--s1) 70%, transparent);
+}
+
+.timeline { position: relative; padding-left: 2.5rem; margin-top: 3.5rem; }
+.timeline::before {
+  content: ''; position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--border2) 10%, var(--border2) 90%, transparent);
+}
+
+.tl-item {
+  position: relative; padding-bottom: 3rem;
+  opacity: 0; transform: translateX(-20px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.tl-item.visible { opacity: 1; transform: translateX(0); }
+.tl-item:last-child { padding-bottom: 0; }
+
+.tl-dot {
+  position: absolute; left: -2.5rem;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--s1); border: 2px solid var(--border3);
+  top: .3rem;
+  transform: translateX(-4.5px);
+  transition: border-color .3s, background .3s;
+}
+.tl-item.active .tl-dot { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 12px rgba(245,158,11,.4); }
+.tl-item:hover .tl-dot { border-color: var(--indigo2); }
+
+.tl-year {
+  font-family: var(--font-mono); font-size: .62rem;
+  color: var(--muted); letter-spacing: .12em;
+  text-transform: uppercase; margin-bottom: .4rem;
+}
+.tl-item.active .tl-year { color: var(--gold); }
+
+.tl-title {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 1.05rem; margin-bottom: .4rem;
+  color: var(--white2);
+}
+.tl-desc {
+  font-size: .86rem; color: var(--muted); line-height: 1.65;
+  max-width: 540px;
+}
+.tl-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .7rem; }
+.tl-tag {
+  padding: .2rem .55rem; border-radius: 6px;
+  background: rgba(99,102,241,.07);
+  border: 1px solid rgba(99,102,241,.14);
+  font-family: var(--font-mono); font-size: .6rem;
+  color: var(--indigo2);
+}
+
+/* ═══════════════════════════════════════════
+   SKILLS
+═══════════════════════════════════════════ */
+#skills { padding: 8rem 0; }
+
+.skills-categories { display: flex; flex-direction: column; gap: 2.5rem; margin-top: 3.5rem; }
+.skill-cat-label {
+  font-family: var(--font-mono); font-size: .62rem;
+  color: var(--muted); letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: .7rem;
+}
+.skill-cat-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.skill-row { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+.skill-chip {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .65rem 1rem; border-radius: 12px;
+  background: var(--s2); border: 1px solid var(--border);
+  transition: all .22s;
+}
+.skill-chip:hover { transform: translateY(-3px); }
+.skill-chip.violet:hover { border-color: var(--violet2); background: rgba(139,92,246,.08); }
+.skill-chip.indigo:hover { border-color: var(--indigo2); background: rgba(99,102,241,.08); }
+.skill-chip.gold:hover   { border-color: var(--gold);    background: rgba(245,158,11,.08); }
+.skill-chip.green:hover  { border-color: var(--green);   background: rgba(52,211,153,.08); }
+
+.skill-chip svg { width: 16px; height: 16px; flex-shrink: 0; }
+.skill-chip.violet svg { color: var(--violet2); }
+.skill-chip.indigo svg { color: var(--indigo2); }
+.skill-chip.gold   svg { color: var(--gold); }
+.skill-chip.green  svg { color: var(--green); }
+
+.skill-chip-name {
+  font-family: var(--font-mono); font-size: .72rem;
+  color: var(--muted); letter-spacing: .04em;
+  transition: color .22s;
+}
+.skill-chip:hover .skill-chip-name { color: var(--white2); }
+
+/* ═══════════════════════════════════════════
+   PROJECTS
+═══════════════════════════════════════════ */
+#projects { padding: 8rem 0; }
+
+.projects-header {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; margin-bottom: 3.5rem;
+  flex-wrap: wrap; gap: 1rem;
+}
+.all-link {
+  font-family: var(--font-mono); font-size: .7rem;
+  color: var(--muted); text-decoration: none;
+  display: flex; align-items: center; gap: .4rem;
+  letter-spacing: .06em; transition: color .2s;
+}
+.all-link:hover { color: var(--indigo2); }
+
+/* Featured project */
+.project-featured {
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 24px; padding: 2.25rem;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2.5rem; align-items: center;
+  margin-bottom: 1.5rem;
+  position: relative; overflow: hidden;
+  transition: border-color .25s, box-shadow .25s;
+}
+.project-featured::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--indigo), var(--violet));
+}
+.project-featured:hover {
+  border-color: var(--border2);
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+.pf-badge-row { display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; }
+.pf-eyebrow {
+  font-family: var(--font-mono); font-size: .62rem;
+  color: var(--gold); letter-spacing: .15em; text-transform: uppercase;
+}
+.pf-title {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 1.8rem; margin-bottom: .75rem; letter-spacing: -.02em;
+}
+.pf-desc { color: var(--muted); line-height: 1.7; font-size: .9rem; margin-bottom: 1.25rem; }
+.pf-stack { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1.5rem; }
+.pf-links { display: flex; gap: .75rem; }
+
+.project-visual {
+  background: var(--s3); border: 1px solid var(--border2);
+  border-radius: 18px; padding: 1.75rem;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.pv-bar { display: flex; gap: .4rem; margin-bottom: .25rem; }
+.pv-dot { width: 8px; height: 8px; border-radius: 50%; }
+.pv-code {
+  font-family: var(--font-mono); font-size: .7rem;
+  color: var(--muted); line-height: 1.8;
+}
+.pv-code .kw  { color: var(--violet2); }
+.pv-code .fn  { color: var(--indigo2); }
+.pv-code .str { color: var(--gold2); }
+.pv-code .cm  { color: var(--muted2); }
+
+/* Project grid */
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.25rem; }
+
+.project-card {
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 1.65rem;
+  display: flex; flex-direction: column; gap: .85rem;
+  transition: all .25s; position: relative; overflow: hidden;
+}
+.project-card::after {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1.5px;
+  background: linear-gradient(90deg, var(--indigo), var(--violet));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .3s;
+}
+.project-card:hover { border-color: var(--border3); transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+.project-card:hover::after { transform: scaleX(1); }
+
+.pc-head { display: flex; align-items: center; justify-content: space-between; }
+.pc-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.25rem;
+}
+.pc-badges { display: flex; align-items: center; gap: .45rem; }
+.badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .22rem .6rem; border-radius: 99px;
+  font-family: var(--font-mono); font-size: .6rem;
+}
+.badge-live { background: rgba(52,211,153,.1); border: 1px solid rgba(52,211,153,.22); color: var(--green); }
+.badge-live::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--green); }
+.badge-wip  { background: rgba(245,158,11,.1);  border: 1px solid rgba(245,158,11,.22);  color: var(--gold); }
+.badge-pypi { background: rgba(99,102,241,.1);  border: 1px solid rgba(99,102,241,.22);  color: var(--indigo2); }
+
+.pc-links { display: flex; gap: .4rem; }
+.pc-link {
+  width: 28px; height: 28px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--s3);
+  color: var(--muted); display: flex; align-items: center;
+  justify-content: center; text-decoration: none;
+  transition: all .18s;
+}
+.pc-link:hover { border-color: var(--violet2); color: var(--white); }
+
+.pc-name { font-family: var(--font-display); font-weight: 700; font-size: 1.02rem; }
+.pc-desc { color: var(--muted); font-size: .84rem; line-height: 1.62; flex: 1; }
+.pc-stack { display: flex; flex-wrap: wrap; gap: .38rem; }
+.stack-tag {
+  padding: .2rem .55rem; border-radius: 6px;
+  background: rgba(99,102,241,.07);
+  border: 1px solid rgba(99,102,241,.13);
+  font-family: var(--font-mono); font-size: .6rem;
+  color: var(--indigo2);
+}
+
+/* ═══════════════════════════════════════════
+   PHILOSOPHY
+═══════════════════════════════════════════ */
+#philosophy {
+  padding: 8rem 0;
+  background: linear-gradient(180deg, transparent, var(--s1) 20%, var(--s1) 80%, transparent);
+  text-align: center;
+}
+
+.phil-inner { max-width: 760px; margin: 0 auto; }
+
+.phil-quote-mark {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 8rem; line-height: .7;
+  background: linear-gradient(135deg, var(--border2), var(--border3));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  user-select: none;
+}
+
+.phil-quote {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  line-height: 1.25; letter-spacing: -.02em;
+  margin: 0 0 1.25rem;
+}
+.phil-quote em { font-style: normal; color: var(--gold); }
+
+.phil-sub { color: var(--muted); font-size: .92rem; line-height: 1.7; margin-bottom: 2.5rem; }
+
+.phil-values { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+.pval {
+  padding: .6rem 1.25rem; border-radius: 99px;
+  border: 1px solid var(--border2);
+  background: rgba(99,102,241,.05);
+  font-family: var(--font-mono); font-size: .7rem;
+  color: var(--muted2); letter-spacing: .06em;
+  transition: all .2s;
+}
+.pval:hover { border-color: var(--violet2); color: var(--violet2); }
+
+/* ═══════════════════════════════════════════
+   CONTACT
+═══════════════════════════════════════════ */
+#contact { padding: 8rem 0 6rem; }
+
+.contact-box {
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 28px; padding: 4rem 3.5rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+.contact-box::before {
+  content: ''; position: absolute;
+  bottom: -80px; left: 50%; transform: translateX(-50%);
+  width: 400px; height: 160px; border-radius: 50%;
+  background: var(--violet); filter: blur(100px); opacity: .12;
+  pointer-events: none;
+}
+.contact-box::after {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--indigo), var(--violet), transparent);
+}
+
+.contact-title { margin-bottom: .75rem; }
+.contact-sub {
+  color: var(--muted); font-size: .94rem; line-height: 1.7;
+  max-width: 440px; margin: 0 auto 2.5rem;
+}
+
+.contact-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+.clink {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .75rem 1.5rem; border-radius: 14px;
+  border: 1px solid var(--border2); background: var(--s3);
+  color: var(--muted); text-decoration: none; font-size: .85rem;
+  transition: all .2s;
+}
+.clink svg { width: 15px; height: 15px; flex-shrink: 0; }
+.clink:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+.clink.linkedin:hover { border-color: #0077b5; color: #0077b5; }
+.clink.github:hover   { border-color: var(--white2); color: var(--white2); }
+.clink.web:hover      { border-color: var(--indigo2); color: var(--indigo2); }
+
+.contact-email {
+  font-size: .88rem; color: var(--muted);
+}
+.contact-email a {
+  color: var(--gold); text-decoration: none; font-weight: 500;
+}
+.contact-email a:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer {
+  position: relative; z-index: 1;
+  padding: 1.75rem 3rem;
+  border-top: 1px solid var(--border);
+  background: var(--s1);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+  font-family: var(--font-mono); font-size: .65rem; color: var(--muted);
+}
+footer span { color: var(--indigo2); }
+
+/* Scroll to top */
+#scroll-top {
+  position: fixed; bottom: 2rem; left: 2rem;
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--s3); border: 1px solid var(--border2);
+  color: var(--muted); display: flex; align-items: center; justify-content: center;
+  z-index: 900; transition: all .2s; opacity: 0; pointer-events: none;
+}
+#scroll-top.visible { opacity: 1; pointer-events: auto; }
+#scroll-top:hover { border-color: var(--indigo2); color: var(--white); transform: translateY(-2px); }
+
+/* ═══════════════════════════════════════════
+   SCROLL PROGRESS BAR
+═══════════════════════════════════════════ */
+#progress-bar {
+  position: fixed; top: 0; left: 0;
+  height: 2px; background: linear-gradient(90deg, var(--indigo), var(--gold));
+  z-index: 9999; transition: width .1s linear;
+  width: 0%;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 960px) {
+  nav { padding: .85rem 1.5rem; }
+  nav.scrolled { padding: .65rem 1.5rem; }
+  .nav-links, .nav-cta { display: none; }
+  .nav-ham { display: flex; }
+  .hero-grid { grid-template-columns: 1fr; text-align: center; }
+  .hero-visual { display: none; }
+  .hero-available { margin-left: auto; margin-right: auto; }
+  .hero-kof { justify-content: center; }
+  .hero-desc { margin-left: auto; margin-right: auto; }
+  .hero-btns { justify-content: center; }
+  .hero-stats { justify-content: center; }
+  .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .project-featured { grid-template-columns: 1fr; }
+  .project-visual { display: none; }
+  footer { padding: 1.5rem; }
+}
+@media (max-width: 600px) {
+  .container { padding: 0 1.25rem; }
+  #hero { padding: 6rem 0 4rem; }
+  .contact-box { padding: 2.5rem 1.5rem; }
+  footer { flex-direction: column; text-align: center; }
+  #scroll-top { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── ATMOSPHERIC ── -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
+<div class="blob b4"></div>
+<div class="grid-bg"></div>
+<div id="progress-bar"></div>
+
+<!-- ── NAV ── -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">
+    Elton<span class="nav-logo-dot">.</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">à propos</a></li>
+    <li><a href="#parcours">parcours</a></li>
+    <li><a href="#skills">stack</a></li>
+    <li><a href="#projects">projets</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+  <a href="mailto:eltonhounnou27@gmail.com" class="nav-cta">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+    Me contacter
+  </a>
+  <button class="nav-ham" id="nav-ham" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile drawer -->
+<div class="nav-overlay" id="nav-overlay"></div>
+<div class="nav-drawer" id="nav-drawer">
+  <button class="nav-drawer-close" id="nav-close">✕</button>
+  <a href="#about"     onclick="closeDrawer()">À propos</a>
+  <a href="#parcours"  onclick="closeDrawer()">Parcours</a>
+  <a href="#skills"    onclick="closeDrawer()">Stack</a>
+  <a href="#projects"  onclick="closeDrawer()">Projets</a>
+  <a href="#contact"   onclick="closeDrawer()">Contact</a>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HERO
+═══════════════════════════════════════ -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-grid">
+
+      <!-- LEFT -->
+      <div class="hero-left">
+        <div class="hero-available">
+          <span class="avail-dot"></span>
+          Disponible · Collaborations & freelance
+        </div>
+
+        <h1 class="hero-name">
+          <span class="line1">Elton</span>
+          <span class="line2">Hounnou</span>
+        </h1>
+
+        <div class="hero-kof">The KOF — Killer Of Frontend</div>
+
+        <div class="hero-typewriter-wrap">
+          <span class="hero-typewriter-prefix">$&gt;&nbsp;</span>
+          <span id="hero-typewriter"></span><span class="tw-cursor"></span>
+        </div>
+
+        <p class="hero-desc">
+          Builder passionné depuis <strong>Cotonou, Bénin 🇧🇯</strong> —
+          je construis des produits digitaux avec âme. Des apps IA aux SaaS,
+          en passant par des packages npm qui servent toute l'Afrique francophone.
+        </p>
+
+        <div class="hero-btns">
+          <a href="#projects" class="btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Voir mes projets
+          </a>
+          <a href="https://github.com/eltonhounnou" target="_blank" class="btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div>
+            <div class="stat-num">7+</div>
+            <div class="stat-label">Projets lancés</div>
+          </div>
+          <div>
+            <div class="stat-num">3+</div>
+            <div class="stat-label">Années d'XP</div>
+          </div>
+          <div>
+            <div class="stat-num">2</div>
+            <div class="stat-label">Packages npm</div>
+          </div>
+          <div>
+            <div class="stat-num">∞</div>
+            <div class="stat-label">Rage de build</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT CARD -->
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="hero-card-inner">
+            <div class="hero-av">EH</div>
+            <div class="hero-card-name">Elton Hounnou</div>
+            <div class="hero-card-handle">@eltondev · @elton_hounnou</div>
+            <div class="hero-tags">
+              <span class="htag">React</span>
+              <span class="htag">TypeScript</span>
+              <span class="htag">Python</span>
+              <span class="htag">Supabase</span>
+              <span class="htag">Groq AI</span>
+              <span class="htag">Node.js</span>
+            </div>
+          </div>
+          <div class="hero-card-status">
+            <span class="status-dot"></span>
+            En stage · Building My AfriChat
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     MARQUEE
+═══════════════════════════════════════ -->
+<div class="marquee-section">
+  <div class="marquee-inner">
+    <!-- track duplicated for seamless loop -->
+    <div class="marquee-track" aria-hidden="true">
+      <span class="m-item indigo"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>React</span><span class="m-dot"></span>
+      <span class="m-item violet">TypeScript</span><span class="m-dot"></span>
+      <span class="m-item">Tailwind CSS</span><span class="m-dot"></span>
+      <span class="m-item indigo">Vite</span><span class="m-dot"></span>
+      <span class="m-item gold">Groq / Llama</span><span class="m-dot"></span>
+      <span class="m-item">Supabase</span><span class="m-dot"></span>
+      <span class="m-item violet">Python</span><span class="m-dot"></span>
+      <span class="m-item">Node.js</span><span class="m-dot"></span>
+      <span class="m-item gold">my-africhat</span><span class="m-dot"></span>
+      <span class="m-item indigo">OpenCV</span><span class="m-dot"></span>
+      <span class="m-item">AWS</span><span class="m-dot"></span>
+      <span class="m-item violet">i18n-forge</span><span class="m-dot"></span>
+      <span class="m-item">Chrome Extensions</span><span class="m-dot"></span>
+      <span class="m-item gold">DeepL API</span><span class="m-dot"></span>
+      <span class="m-item">ESP32 / C++</span><span class="m-dot"></span>
+    </div>
+    <div class="marquee-track" aria-hidden="true">
+      <span class="m-item indigo"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>React</span><span class="m-dot"></span>
+      <span class="m-item violet">TypeScript</span><span class="m-dot"></span>
+      <span class="m-item">Tailwind CSS</span><span class="m-dot"></span>
+      <span class="m-item indigo">Vite</span><span class="m-dot"></span>
+      <span class="m-item gold">Groq / Llama</span><span class="m-dot"></span>
+      <span class="m-item">Supabase</span><span class="m-dot"></span>
+      <span class="m-item violet">Python</span><span class="m-dot"></span>
+      <span class="m-item">Node.js</span><span class="m-dot"></span>
+      <span class="m-item gold">my-africhat</span><span class="m-dot"></span>
+      <span class="m-item indigo">OpenCV</span><span class="m-dot"></span>
+      <span class="m-item">AWS</span><span class="m-dot"></span>
+      <span class="m-item violet">i18n-forge</span><span class="m-dot"></span>
+      <span class="m-item">Chrome Extensions</span><span class="m-dot"></span>
+      <span class="m-item gold">DeepL API</span><span class="m-dot"></span>
+      <span class="m-item">ESP32 / C++</span><span class="m-dot"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ABOUT
+═══════════════════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+
+      <div class="reveal">
+        <div class="section-eyebrow">à propos</div>
+        <h2 class="section-title" style="margin-bottom:1.5rem">
+          Je suis un builder,<br>pas juste un dev.
+        </h2>
+        <p class="about-text">
+          Étudiant en <strong>L3 Systèmes Informatiques et Logiciels</strong> à ESM Université Privée,
+          je construis des solutions réelles pour des problèmes réels — de la reconnaissance faciale
+          aux chatbots vocaux IA installables en une ligne npm.
+        </p>
+        <p class="about-text">
+          Sous ma marque <strong>The KOF — Killer Of Frontend</strong>, j'opère sur React, TypeScript,
+          Python et l'écosystème IA. Je suis <strong>Social Media Lead</strong> du premier
+          AWS Cloud Club du Bénin à l'IMeN, et mentor chez FuturCraft Institut.
+        </p>
+        <p class="about-text">
+          Ma mission : créer des outils qui servent la <strong>communauté tech francophone africaine</strong>.
+          Vaultify, FrontForge, InnerBuild, My AfriChat — tout converge vers cet objectif.
+        </p>
+      </div>
+
+      <div class="reveal info-cards" style="transition-delay:.15s">
+        <div class="info-card">
+          <div class="info-icon">🎓</div>
+          <div>
+            <div class="info-label">Formation</div>
+            <div class="info-val">L3 SIL · ESM Université Privée, Bénin</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">📍</div>
+          <div>
+            <div class="info-label">Localisation</div>
+            <div class="info-val">Abomey-Calavi, Cotonou — Bénin 🇧🇯</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">☁️</div>
+          <div>
+            <div class="info-label">Communauté</div>
+            <div class="info-val">Social Media Lead · AWS Cloud Club IMeN</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🔥</div>
+          <div>
+            <div class="info-label">Actuellement</div>
+            <div class="info-val">Stage Build With Afri · My AfriChat · Mémoire SRFC-AU</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">📦</div>
+          <div>
+            <div class="info-label">Packages npm publiés</div>
+            <div class="info-val">
+              <a href="https://npmjs.com/package/my-africhat" target="_blank">my-africhat</a>
+              &nbsp;·&nbsp;
+              <a href="https://npmjs.com/package/i18n-forge" target="_blank">i18n-forge</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     PARCOURS / TIMELINE
+═══════════════════════════════════════ -->
+<section id="parcours">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">parcours</div>
+      <h2 class="section-title">L'histoire du builder</h2>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item reveal" style="transition-delay:.05s">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2021</div>
+        <div class="tl-title">Les débuts — HTML, CSS, PHP</div>
+        <p class="tl-desc">
+          Premières lignes de code. HTML/CSS statique, puis PHP/MySQL pour les projets académiques
+          (MEDISTOCK, Gestion École, ANAT Bénin, GETECH EXPRESS). Le virus du build s'installe.
+        </p>
+        <div class="tl-tags">
+          <span class="tl-tag">PHP/PDO</span><span class="tl-tag">MySQL</span><span class="tl-tag">Bootstrap</span>
+        </div>
+      </div>
+
+      <div class="tl-item reveal" style="transition-delay:.1s">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2022 – 2023</div>
+        <div class="tl-title">React, Python & premiers packages</div>
+        <p class="tl-desc">
+          Bascule vers React + TypeScript. Python pour la vision par ordinateur.
+          Publication de <strong>FingerLock v2.2.2</strong> sur PyPI et <strong>i18n-forge</strong> sur npm.
+          Hackathon ESP32 en 24h — jeu Pong complet avec IA et audio.
+        </p>
+        <div class="tl-tags">
+          <span class="tl-tag">React</span><span class="tl-tag">TypeScript</span><span class="tl-tag">Python</span><span class="tl-tag">PyPI</span><span class="tl-tag">npm</span>
+        </div>
+      </div>
+
+      <div class="tl-item reveal" style="transition-delay:.15s">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2024</div>
+        <div class="tl-title">IA, hackathons & communauté</div>
+        <p class="tl-desc">
+          Lancement de <strong>Vaultify</strong> (découverte GitHub × IA) et <strong>FrontForge</strong>.
+          AWS Cloud Club IMeN — Social Media Lead du premier club AWS du Bénin.
+          Hackathon Cursor (HealthPocket BJ) et Hackathon TNS 2026 (FinMatch PME).
+          <strong>InnerBuild Saison 01</strong> — 20 participants, challenge portfolio 7 jours.
+        </p>
+        <div class="tl-tags">
+          <span class="tl-tag">Groq AI</span><span class="tl-tag">Supabase</span><span class="tl-tag">Vaultify</span><span class="tl-tag">AWS</span><span class="tl-tag">Hackathons</span>
+        </div>
+      </div>
+
+      <div class="tl-item active reveal" style="transition-delay:.2s">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2025 — Maintenant</div>
+        <div class="tl-title">Stage Build With Afri · My AfriChat · Mémoire</div>
+        <p class="tl-desc">
+          En stage chez <strong>Build With Afri</strong>, construction de <strong>My AfriChat</strong> —
+          widget chatbot IA vocal, installable en une ligne npm, première du genre au Bénin.
+          Mémoire de soutenance : <strong>SRFC-AU</strong> (reconnaissance faciale).
+          InnerBuild Saison 02 en cours.
+        </p>
+        <div class="tl-tags">
+          <span class="tl-tag">my-africhat</span><span class="tl-tag">TTS</span><span class="tl-tag">OpenCV</span><span class="tl-tag">InnerBuild S02</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SKILLS
+═══════════════════════════════════════ -->
+<section id="skills">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">stack technique</div>
+      <h2 class="section-title" style="margin-bottom:.75rem">Mes outils de builder</h2>
+      <p style="color:var(--muted);font-size:.92rem;margin-bottom:0;max-width:480px">
+        Chaque technologie choisie pour construire vite, bien, et pour durer.
+      </p>
+    </div>
+
+    <div class="skills-categories reveal" style="transition-delay:.1s">
+
+      <div>
+        <div class="skill-cat-label">Frontend</div>
+        <div class="skill-row">
+          <div class="skill-chip violet">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.11c1.03 0 1.87.84 1.87 1.89 0 1-.84 1.85-1.87 1.85S10.13 13 10.13 12c0-1.05.84-1.89 1.87-1.89M7.37 20c.63.38 2.01-.2 3.6-1.7-.52-.59-1.03-1.23-1.51-1.9a22.7 22.7 0 0 1-2.4-.36c-.51 2.14-.32 3.61.31 3.96m.71-5.74-.29-.51c-.11.29-.22.58-.29.87.27.06.57.11.88.16l-.3-.52m6.54-.76.81-1.5-.81-1.5c-.3-.53-.62-1-.91-1.47C13.17 9 12.6 9 12 9s-1.17 0-1.71.03c-.29.47-.61.94-.91 1.47L8.57 12l.81 1.5c.3.53.62 1 .91 1.47.54.03 1.11.03 1.71.03s1.17 0 1.71-.03c.29-.47.61-.94.91-1.47m-6.94 1.25a22.7 22.7 0 0 1 2.4-.36c.48-.67.99-1.31 1.51-1.9-1.59-1.5-2.97-2.08-3.6-1.7-.63.35-.82 1.82-.31 3.96M12 6.07c-.45.45-.88.98-1.29 1.57.87-.04 1.71-.04 2.58 0C12.88 7.05 12.45 6.52 12 6.07m4.32 8.16c.5-2.14.32-3.61-.31-3.96-.63-.38-2.01.2-3.6 1.7.52.59 1.03 1.23 1.51 1.9.82.08 1.63.2 2.4.36m-.71-5.74.3-.52c-.31.05-.61.1-.88.16.07.29.18.58.29.87l.29-.51m1.45 7.05c.63-.35.82-1.82.31-3.96a22.7 22.7 0 0 1-2.4.36c-.48.67-.99 1.31-1.51 1.9 1.59 1.5 2.97 2.08 3.6 1.7M17 12a5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5z"/></svg>
+            <span class="skill-chip-name">React</span>
+          </div>
+          <div class="skill-chip violet">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z"/></svg>
+            <span class="skill-chip-name">TypeScript</span>
+          </div>
+          <div class="skill-chip violet">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.337 6.182 14.976 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.337 13.382 8.976 12 6.001 12z"/></svg>
+            <span class="skill-chip-name">Tailwind CSS</span>
+          </div>
+          <div class="skill-chip indigo">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.5 4.5a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3h8.25a3 3 0 0 0 3-3v-9a3 3 0 0 0-3-3H4.5ZM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06Z"/></svg>
+            <span class="skill-chip-name">Vite</span>
+          </div>
+          <div class="skill-chip indigo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span class="skill-chip-name">HTML / CSS</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-cat-label">Backend & Data</div>
+        <div class="skill-row">
+          <div class="skill-chip indigo">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.985c-.275 0-.532-.074-.772-.202l-2.439-1.448c-.365-.203-.186-.277-.066-.314.496-.165.588-.201 1.109-.493.056-.03.129-.019.186.015l1.874 1.11c.070.040.165.040.229 0l7.298-4.213c.070-.040.113-.121.113-.202V7.768c0-.084-.044-.162-.113-.202l-7.298-4.208a.232.232 0 0 0-.229 0L4.595 7.566c-.071.04-.114.121-.114.202v8.425c0 .081.043.162.114.202l1.999 1.154c1.087.544 1.751-.097 1.751-.742V8.363c0-.118.095-.213.214-.213h.927c.117 0 .213.095.213.213v8.444c0 1.449-.790 2.279-2.164 2.279-.422 0-.752 0-1.683-.457l-1.914-1.103a1.555 1.555 0 0 1-.771-1.347V7.768c0-.556.297-1.070.771-1.347l7.299-4.213a1.602 1.602 0 0 1 1.542 0l7.298 4.213c.474.277.771.791.771 1.347v8.425c0 .556-.297 1.066-.771 1.347l-7.298 4.213c-.240.128-.497.202-.772.202z"/></svg>
+            <span class="skill-chip-name">Node.js</span>
+          </div>
+          <div class="skill-chip indigo">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.999 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.001 0zm4.927 7.12-.003.003-.027.022a.265.265 0 0 1-.022.015v.003c-.996.496-1.940 1.059-2.798 1.72a11.555 11.555 0 0 0-1.862 1.836 13.87 13.87 0 0 0-1.262 2.204 11.48 11.48 0 0 0-.698 2.302 9.67 9.67 0 0 0-.146 2.202 9.67 9.67 0 0 0 .354 2.168c-.466-.23-.893-.521-1.273-.858a7.42 7.42 0 0 1-.968-1.099 7.42 7.42 0 0 1-.675-1.28 7.42 7.42 0 0 1-.383-1.37 7.42 7.42 0 0 1-.103-1.41 7.42 7.42 0 0 1 .175-1.384A7.42 7.42 0 0 1 8.8 12.65a7.42 7.42 0 0 1 .742-1.199 7.42 7.42 0 0 1 1.028-1.032 7.42 7.42 0 0 1 1.282-.815 7.42 7.42 0 0 1 1.419-.52 7.42 7.42 0 0 1 1.504-.207 7.42 7.42 0 0 1 1.531.083 7.42 7.42 0 0 1 .62.16Z"/></svg>
+            <span class="skill-chip-name">Supabase</span>
+          </div>
+          <div class="skill-chip indigo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            <span class="skill-chip-name">MySQL / SQLite</span>
+          </div>
+          <div class="skill-chip indigo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            <span class="skill-chip-name">PHP / PDO</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-cat-label">IA & APIs</div>
+        <div class="skill-row">
+          <div class="skill-chip gold">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+            <span class="skill-chip-name">Groq / Llama</span>
+          </div>
+          <div class="skill-chip gold">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span class="skill-chip-name">Claude / OpenAI</span>
+          </div>
+          <div class="skill-chip gold">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <span class="skill-chip-name">TTS / Audio API</span>
+          </div>
+          <div class="skill-chip gold">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span class="skill-chip-name">DeepL API</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-cat-label">Outils & DevOps</div>
+        <div class="skill-row">
+          <div class="skill-chip green">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            <span class="skill-chip-name">GitHub</span>
+          </div>
+          <div class="skill-chip green">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span class="skill-chip-name">Vercel / Netlify</span>
+          </div>
+          <div class="skill-chip green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+            <span class="skill-chip-name">AWS</span>
+          </div>
+          <div class="skill-chip green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span class="skill-chip-name">Chrome Extension MV3</span>
+          </div>
+          <div class="skill-chip green">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.4 0C5.098 0 0 5.098 0 11.4c0 6.302 5.098 11.4 11.4 11.4 6.302 0 11.4-5.098 11.4-11.4C22.8 5.1 17.7 0 11.4 0zm4.875 14.4l-5.04 2.94c-.345.195-.78-.048-.78-.435V8.895c0-.387.435-.63.78-.435l5.04 2.94c.345.195.345.705 0 .9v2.1z"/></svg>
+            <span class="skill-chip-name">Linux / XAMPP</span>
+          </div>
+          <div class="skill-chip green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <span class="skill-chip-name">Python / OpenCV</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     PROJECTS
+═══════════════════════════════════════ -->
+<section id="projects">
+  <div class="container">
+    <div class="projects-header reveal">
+      <div>
+        <div class="section-eyebrow">ce que j'ai construit</div>
+        <h2 class="section-title">Projets</h2>
+      </div>
+      <a href="https://github.com/eltonhounnou" target="_blank" class="all-link">
+        Tout voir sur GitHub
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+
+    <!-- FEATURED: My AfriChat -->
+    <div class="project-featured reveal">
+      <div>
+        <div class="pf-badge-row">
+          <span class="pf-eyebrow">✦ Projet phare</span>
+          <span class="badge badge-live">Live</span>
+        </div>
+        <h3 class="pf-title">My AfriChat</h3>
+        <p class="pf-desc">
+          Widget chatbot IA conversationnel avec synthèse vocale — le bot répond en texte <em>et</em> en audio.
+          Installable sur n'importe quel site en une ligne npm. Streaming SSE, WebRTC temps réel,
+          6 voix disponibles. Première du genre au Bénin et en Afrique francophone.
+          Développé pendant le stage Build With Afri.
+        </p>
+        <div class="pf-stack">
+          <span class="stack-tag">npm install my-africhat</span>
+          <span class="stack-tag">React</span>
+          <span class="stack-tag">TypeScript</span>
+          <span class="stack-tag">TTS API</span>
+          <span class="stack-tag">Supabase Edge Functions</span>
+          <span class="stack-tag">SSE / WebRTC</span>
+        </div>
+        <div class="pf-links">
+          <a href="https://npmjs.com/package/my-africhat" target="_blank" class="btn-primary" style="font-size:.82rem;padding:.65rem 1.4rem">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0v24h6.5v-3h11v3H24V0zm6.5 17.5h-3v-11h3zm4.5 0V6.5h3v11zm4.5 0V6.5h3v11z"/></svg>
+            npm package
+          </a>
+          <a href="https://afri-test.netlify.app" target="_blank" class="btn-ghost" style="font-size:.82rem;padding:.65rem 1.4rem">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Demo live
+          </a>
+        </div>
+      </div>
+      <div class="project-visual">
+        <div class="pv-bar">
+          <div class="pv-dot" style="background:#ff5f57"></div>
+          <div class="pv-dot" style="background:#ffbd2e"></div>
+          <div class="pv-dot" style="background:#28c840"></div>
+        </div>
+        <div class="pv-code">
+          <span class="cm">// 1. Install</span><br>
+          <span class="kw">npm</span> install <span class="str">my-africhat</span><br><br>
+          <span class="cm">// 2. Configure africhat.config.ts</span><br>
+          <span class="kw">const</span> config = {<br>
+          &nbsp;&nbsp;branding: { accentColor: <span class="str">"#f59e0b"</span> },<br>
+          &nbsp;&nbsp;assistant: { voice: <span class="str">"nova"</span>, audioEnabled: <span class="kw">true</span> },<br>
+          &nbsp;&nbsp;api: { siteKey: <span class="str">"afc_live_..."</span> }<br>
+          }<br><br>
+          <span class="cm">// 3. Mount</span><br>
+          <span class="kw">import</span> { <span class="fn">createMyAfriChat</span> } <span class="kw">from</span> <span class="str">"my-africhat"</span><br>
+          <span class="fn">createMyAfriChat</span>(config).<span class="fn">mount</span>()
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS GRID -->
+    <div class="projects-grid">
+
+      <div class="project-card reveal">
+        <div class="pc-head">
+          <div class="pc-icon" style="background:rgba(99,102,241,.1)">🔭</div>
+          <div class="pc-badges">
+            <span class="badge badge-live">Live</span>
+            <div class="pc-links">
+              <a href="https://vaultify-woad.vercel.app" target="_blank" class="pc-link" title="Demo">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="pc-name">Vaultify</div>
+        <div class="pc-desc">Moteur de découverte de dépôts GitHub propulsé par l'IA (Groq / Llama 3.3 70B) — pour la communauté tech francophone africaine. Favoris, collections, export.</div>
+        <div class="pc-stack">
+          <span class="stack-tag">React</span><span class="stack-tag">TypeScript</span><span class="stack-tag">Supabase</span><span class="stack-tag">Groq API</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal" style="transition-delay:.07s">
+        <div class="pc-head">
+          <div class="pc-icon" style="background:rgba(245,158,11,.1)">📚</div>
+          <div class="pc-badges">
+            <span class="badge badge-live">Actif</span>
+          </div>
+        </div>
+        <div class="pc-name">FrontForge</div>
+        <div class="pc-desc">Programme d'accompagnement frontend sous la marque The KOF. 4 guides PDF + module IA bonus, landing page, ressources pédagogiques pour les développeurs francophones africains. Tarification FCFA.</div>
+        <div class="pc-stack">
+          <span class="stack-tag">React</span><span class="stack-tag">Tailwind</span><span class="stack-tag">PDF</span><span class="stack-tag">Pédagogie</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal" style="transition-delay:.14s">
+        <div class="pc-head">
+          <div class="pc-icon" style="background:rgba(52,211,153,.1)">🏆</div>
+          <div class="pc-badges">
+            <span class="badge badge-wip">Saison 02</span>
+          </div>
+        </div>
+        <div class="pc-name">InnerBuild</div>
+        <div class="pc-desc">Challenge communautaire dev béninois par saisons. Saison 01 : 20 InBuilders, portfolio challenge 7j, jury 6 critères, finale présentielle. Plateforme multi-acteurs complète.</div>
+        <div class="pc-stack">
+          <span class="stack-tag">Community</span><span class="stack-tag">Hackathon</span><span class="stack-tag">Bénin</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal" style="transition-delay:.05s">
+        <div class="pc-head">
+          <div class="pc-icon" style="background:rgba(251,113,133,.1)">👁️</div>
+          <div class="pc-badges">
+            <span class="badge badge-wip">Mémoire L3</span>
+          </div>
+        </div>
+        <div class="pc-name">SRFC-AU</div>
+        <div class="pc-desc">Système de Reconnaissance Faciale pour le Contrôle d'Assiduité Universitaire. Détection temps réel via webcam, rapport PDF automatique. Projet de soutenance de fin d'études.</div>
+        <div class="pc-stack">
+          <span class="stack-tag">Python</span><span class="stack-tag">OpenCV</span><span class="stack-tag">Dlib</span><span class="stack-tag">SQLite</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal" style="transition-delay:.12s">
+        <div class="pc-head">
+          <div class="pc-icon" style="background:rgba(99,102,241,.1)">🌍</div>
+          <div class="pc-badges">
+            <span class="badge badge-live">npm</span>
+          </div>
+        </div>
+        <div class="pc-name">i18n-forge</div>
+        <div class="pc-desc">CLI npm combinant DeepL + Groq pour automatiser la génération de fichiers JSON i18n dans des projets React TypeScript. 4 commandes, wizard interactif, API programmatique.</div>
+        <div class="pc-stack">
+          <span class="stack-tag">Node.js</span><span class="stack-tag">TypeScript ESM</span><span class="stack-tag">DeepL</span><span class="stack-tag">Groq</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal" style="transition-delay:.19s">
+        <div class="pc-head">
+          <div class="pc-icon" style="background:rgba(245,158,11,.1)">🔒</div>
+          <div class="pc-badges">
+            <span class="badge badge-pypi">PyPI v2.2.2</span>
+            <div class="pc-links">
+              <a href="https://pypi.org/project/fingerlock" target="_blank" class="pc-link" title="PyPI">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="pc-name">FingerLock</div>
+        <div class="pc-desc">Application Python de verrouillage automatique Linux par empreinte digitale. Migration pynput → evdev pour compatibilité Wayland. Publié sur PyPI jusqu'à la v2.2.2.</div>
+        <div class="pc-stack">
+          <span class="stack-tag">Python</span><span class="stack-tag">evdev</span><span class="stack-tag">Linux</span><span class="stack-tag">PyPI</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     PHILOSOPHY
+═══════════════════════════════════════ -->
+<section id="philosophy">
+  <div class="container">
+    <div class="phil-inner reveal">
+      <div class="phil-quote-mark" aria-hidden="true">"</div>
+      <blockquote class="phil-quote">
+        Tout est possible à partir du moment
+        où on <em>décide</em> que c'est possible.
+      </blockquote>
+      <p class="phil-sub">
+        Je ne suis pas juste un développeur — je suis un builder. Je construis chaque jour,
+        chaque minute, avec la conviction que les outils que je crée aujourd'hui
+        vont transformer la communauté tech africaine de demain.
+      </p>
+      <div class="phil-values">
+        <div class="pval">Build in public</div>
+        <div class="pval">African tech ecosystem</div>
+        <div class="pval">Open source first</div>
+        <div class="pval">Ship fast, learn faster</div>
+        <div class="pval">Mentorship</div>
+        <div class="pval">∞ Rage de builder</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     CONTACT
+═══════════════════════════════════════ -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-box reveal">
+      <div class="section-eyebrow" style="justify-content:center">contact</div>
+      <h2 class="section-title contact-title">Travaillons<br>ensemble</h2>
+      <p class="contact-sub">
+        Un projet, une idée, une collaboration ? Je suis disponible pour du freelance,
+        des missions et des échanges tech. N'hésite pas à me contacter.
+      </p>
+      <div class="contact-links">
+        <a href="https://linkedin.com/in/elton-hounnou" target="_blank" class="clink linkedin">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/eltonhounnou" target="_blank" class="clink github">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="https://elton-dev.vercel.app" target="_blank" class="clink web">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Portfolio live
+        </a>
+      </div>
+      <p class="contact-email">
+        Ou écris directement à <a href="mailto:eltonhounnou27@gmail.com">eltonhounnou27@gmail.com</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<footer>
+  <div>© 2025 <span>Elton Hounnou</span> — The KOF · Construit avec 🔥 depuis Cotonou, Bénin.</div>
+  <div>Powered by <span>My AfriChat</span> · #BuildWithAfri</div>
+</footer>
+
+<!-- Scroll to top -->
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Retour en haut">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+/* ── Custom cursor ── */
+const cursor     = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let cx = 0, cy = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  cx = e.clientX; cy = e.clientY;
+  cursor.style.left = cx + 'px';
+  cursor.style.top  = cy + 'px';
+});
+
+(function lerpRing() {
+  rx += (cx - rx) * .12;
+  ry += (cy - ry) * .12;
+  cursorRing.style.left = rx + 'px';
+  cursorRing.style.top  = ry + 'px';
+  requestAnimationFrame(lerpRing);
+})();
+
+document.querySelectorAll('a, button, [onclick], .project-card, .skill-chip, .pval, .clink, .pc-link, .info-card')
+  .forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+  });
+
+/* ── Progress bar ── */
+const progressBar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  progressBar.style.width = pct + '%';
+});
+
+/* ── Nav scroll ── */
+const navbar    = document.getElementById('navbar');
+const scrollTop = document.getElementById('scroll-top');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+  scrollTop.classList.toggle('visible', window.scrollY > 600);
+});
+
+/* ── Active nav links ── */
+const sections  = document.querySelectorAll('section[id]');
+const navLinks  = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 140) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}, { passive: true });
+
+/* ── Mobile drawer ── */
+const navHam     = document.getElementById('nav-ham');
+const navDrawer  = document.getElementById('nav-drawer');
+const navOverlay = document.getElementById('nav-overlay');
+const navClose   = document.getElementById('nav-close');
+
+function openDrawer()  { navDrawer.classList.add('open');  navOverlay.classList.add('open'); }
+function closeDrawer() { navDrawer.classList.remove('open'); navOverlay.classList.remove('open'); }
+
+navHam.addEventListener('click', openDrawer);
+navClose.addEventListener('click', closeDrawer);
+navOverlay.addEventListener('click', closeDrawer);
+
+/* ── Scroll reveal (IntersectionObserver) ── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal, .tl-item').forEach(el => observer.observe(el));
+
+/* ── Typewriter effect ── */
+const roles = [
+  'Killer Of Frontend',
+  'Builder de Produits IA',
+  'Social Media Lead · AWS',
+  'Créateur & Mentor',
+  'npm package author',
+  'Fullstack Developer'
+];
+let roleIdx = 0, charIdx = 0, deleting = false;
+const twEl = document.getElementById('hero-typewriter');
+
+function typewrite() {
+  const current = roles[roleIdx];
+  if (!deleting) {
+    twEl.textContent = current.slice(0, ++charIdx);
+    if (charIdx === current.length) { deleting = true; setTimeout(typewrite, 1800); return; }
+  } else {
+    twEl.textContent = current.slice(0, --charIdx);
+    if (charIdx === 0) { deleting = false; roleIdx = (roleIdx + 1) % roles.length; }
+  }
+  setTimeout(typewrite, deleting ? 45 : 80);
+}
+setTimeout(typewrite, 800);
+</script>
+
+<!-- ── My AfriChat widget (Vite entry) ── -->
+<script type="module" src="/src/main.ts"></script>
+
+</body>
+</html>
