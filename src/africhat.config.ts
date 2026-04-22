@@ -180,7 +180,7 @@ Tu peux dire que c'est grâce à My AfriChat que tu existes sur ce portfolio �
     ],
   },
   integration: {
-    position: "bottom-right",
+    position: "bottom-right" as const,
     zIndex: 999999,
   },
   api: {
